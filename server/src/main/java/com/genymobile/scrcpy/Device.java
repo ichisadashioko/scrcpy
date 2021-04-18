@@ -1,12 +1,5 @@
 package com.genymobile.scrcpy;
 
-import com.genymobile.scrcpy.wrappers.ClipboardManager;
-import com.genymobile.scrcpy.wrappers.ContentProvider;
-import com.genymobile.scrcpy.wrappers.InputManager;
-import com.genymobile.scrcpy.wrappers.ServiceManager;
-import com.genymobile.scrcpy.wrappers.SurfaceControl;
-import com.genymobile.scrcpy.wrappers.WindowManager;
-
 import android.content.IOnPrimaryClipChangedListener;
 import android.graphics.Rect;
 import android.os.Build;
@@ -17,6 +10,13 @@ import android.view.InputDevice;
 import android.view.InputEvent;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+
+import com.genymobile.scrcpy.wrappers.ClipboardManager;
+import com.genymobile.scrcpy.wrappers.ContentProvider;
+import com.genymobile.scrcpy.wrappers.InputManager;
+import com.genymobile.scrcpy.wrappers.ServiceManager;
+import com.genymobile.scrcpy.wrappers.SurfaceControl;
+import com.genymobile.scrcpy.wrappers.WindowManager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,14 +40,10 @@ public final class Device {
     private ClipboardListener clipboardListener;
     private final AtomicBoolean isSettingClipboard = new AtomicBoolean();
 
-    /**
-     * Logical display identifier
-     */
+    /** Logical display identifier */
     private final int displayId;
 
-    /**
-     * The surface flinger layer stack associated with this logical display
-     */
+    /** The surface flinger layer stack associated with this logical display */
     private final int layerStack;
 
     private final boolean supportsInputEvents;
@@ -62,51 +58,63 @@ public final class Device {
 
         int displayInfoFlags = displayInfo.getFlags();
 
-        screenInfo = ScreenInfo.computeScreenInfo(displayInfo, options.getCrop(), options.getMaxSize(), options.getLockedVideoOrientation());
+        screenInfo =
+                ScreenInfo.computeScreenInfo(
+                        displayInfo,
+                        options.getCrop(),
+                        options.getMaxSize(),
+                        options.getLockedVideoOrientation());
         layerStack = displayInfo.getLayerStack();
 
-        SERVICE_MANAGER.getWindowManager().registerRotationWatcher(new IRotationWatcher.Stub() {
-            @Override
-            public void onRotationChanged(int rotation) {
-                synchronized (Device.this) {
-                    screenInfo = screenInfo.withDeviceRotation(rotation);
+        SERVICE_MANAGER
+                .getWindowManager()
+                .registerRotationWatcher(
+                        new IRotationWatcher.Stub() {
+                            @Override
+                            public void onRotationChanged(int rotation) {
+                                synchronized (Device.this) {
+                                    screenInfo = screenInfo.withDeviceRotation(rotation);
 
-                    // notify
-                    if (rotationListener != null) {
-                        rotationListener.onRotationChanged(rotation);
-                    }
-                }
-            }
-        }, displayId);
+                                    // notify
+                                    if (rotationListener != null) {
+                                        rotationListener.onRotationChanged(rotation);
+                                    }
+                                }
+                            }
+                        },
+                        displayId);
 
         if (options.getControl()) {
             // If control is enabled, synchronize Android clipboard to the computer automatically
             ClipboardManager clipboardManager = SERVICE_MANAGER.getClipboardManager();
             if (clipboardManager != null) {
-                clipboardManager.addPrimaryClipChangedListener(new IOnPrimaryClipChangedListener.Stub() {
-                    @Override
-                    public void dispatchPrimaryClipChanged() {
-                        if (isSettingClipboard.get()) {
-                            // This is a notification for the change we are currently applying, ignore it
-                            return;
-                        }
-                        synchronized (Device.this) {
-                            if (clipboardListener != null) {
-                                String text = getClipboardText();
-                                if (text != null) {
-                                    clipboardListener.onClipboardTextChanged(text);
+                clipboardManager.addPrimaryClipChangedListener(
+                        new IOnPrimaryClipChangedListener.Stub() {
+                            @Override
+                            public void dispatchPrimaryClipChanged() {
+                                if (isSettingClipboard.get()) {
+                                    // This is a notification for the change we are currently
+                                    // applying, ignore it
+                                    return;
+                                }
+                                synchronized (Device.this) {
+                                    if (clipboardListener != null) {
+                                        String text = getClipboardText();
+                                        if (text != null) {
+                                            clipboardListener.onClipboardTextChanged(text);
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                });
+                        });
             } else {
                 Ln.w("No clipboard manager, copy-paste between device and computer will not work");
             }
         }
 
         if ((displayInfoFlags & DisplayInfo.FLAG_SUPPORTS_PROTECTED_BUFFERS) == 0) {
-            Ln.w("Display doesn't have FLAG_SUPPORTS_PROTECTED_BUFFERS flag, mirroring can be restricted");
+            Ln.w(
+                    "Display doesn't have FLAG_SUPPORTS_PROTECTED_BUFFERS flag, mirroring can be restricted");
         }
 
         // main display or any display on Android >= Q
@@ -129,7 +137,8 @@ public final class Device {
         @SuppressWarnings("checkstyle:HiddenField")
         ScreenInfo screenInfo = getScreenInfo(); // read with synchronization
 
-        // ignore the locked video orientation, the events will apply in coordinates considered in the physical device orientation
+        // ignore the locked video orientation, the events will apply in coordinates considered in
+        // the physical device orientation
         Size unlockedVideoSize = screenInfo.getUnlockedVideoSize();
 
         int reverseVideoRotation = screenInfo.getReverseVideoRotation();
@@ -144,8 +153,12 @@ public final class Device {
         }
         Rect contentRect = screenInfo.getContentRect();
         Point point = devicePosition.getPoint();
-        int convertedX = contentRect.left + point.getX() * contentRect.width() / unlockedVideoSize.getWidth();
-        int convertedY = contentRect.top + point.getY() * contentRect.height() / unlockedVideoSize.getHeight();
+        int convertedX =
+                contentRect.left
+                        + point.getX() * contentRect.width() / unlockedVideoSize.getWidth();
+        int convertedY =
+                contentRect.top
+                        + point.getY() * contentRect.height() / unlockedVideoSize.getHeight();
         return new Point(convertedX, convertedY);
     }
 
@@ -175,13 +188,24 @@ public final class Device {
 
     public boolean injectKeyEvent(int action, int keyCode, int repeat, int metaState) {
         long now = SystemClock.uptimeMillis();
-        KeyEvent event = new KeyEvent(now, now, action, keyCode, repeat, metaState, KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0,
-                InputDevice.SOURCE_KEYBOARD);
+        KeyEvent event =
+                new KeyEvent(
+                        now,
+                        now,
+                        action,
+                        keyCode,
+                        repeat,
+                        metaState,
+                        KeyCharacterMap.VIRTUAL_KEYBOARD,
+                        0,
+                        0,
+                        InputDevice.SOURCE_KEYBOARD);
         return injectEvent(event);
     }
 
     public boolean injectKeycode(int keyCode) {
-        return injectKeyEvent(KeyEvent.ACTION_DOWN, keyCode, 0, 0) && injectKeyEvent(KeyEvent.ACTION_UP, keyCode, 0, 0);
+        return injectKeyEvent(KeyEvent.ACTION_DOWN, keyCode, 0, 0)
+                && injectKeyEvent(KeyEvent.ACTION_UP, keyCode, 0, 0);
     }
 
     public static boolean isScreenOn() {
@@ -225,9 +249,12 @@ public final class Device {
         String currentClipboard = getClipboardText();
         if (currentClipboard != null && currentClipboard.equals(text)) {
             // The clipboard already contains the requested text.
-            // Since pasting text from the computer involves setting the device clipboard, it could be set twice on a copy-paste. This would cause
-            // the clipboard listeners to be notified twice, and that would flood the Android keyboard clipboard history. To workaround this
-            // problem, do not explicitly set the clipboard text if it already contains the expected content.
+            // Since pasting text from the computer involves setting the device clipboard, it could
+            // be set twice on a copy-paste. This would cause
+            // the clipboard listeners to be notified twice, and that would flood the Android
+            // keyboard clipboard history. To workaround this
+            // problem, do not explicitly set the clipboard text if it already contains the expected
+            // content.
             return false;
         }
 
@@ -237,9 +264,7 @@ public final class Device {
         return ok;
     }
 
-    /**
-     * @param mode one of the {@code POWER_MODE_*} constants
-     */
+    /** @param mode one of the {@code POWER_MODE_*} constants */
     public static boolean setScreenPowerMode(int mode) {
         IBinder d = SurfaceControl.getBuiltInDisplay();
         if (d == null) {
@@ -250,7 +275,8 @@ public final class Device {
     }
 
     /**
-     * Disable auto-rotation (if enabled), set the screen rotation and re-enable auto-rotation (if it was enabled).
+     * Disable auto-rotation (if enabled), set the screen rotation and re-enable auto-rotation (if
+     * it was enabled).
      */
     public static void rotateDevice() {
         WindowManager wm = SERVICE_MANAGER.getWindowManager();

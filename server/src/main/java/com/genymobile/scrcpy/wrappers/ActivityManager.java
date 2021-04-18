@@ -1,10 +1,10 @@
 package com.genymobile.scrcpy.wrappers;
 
-import com.genymobile.scrcpy.Ln;
-
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
+
+import com.genymobile.scrcpy.Ln;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -24,11 +24,23 @@ public class ActivityManager {
     private Method getGetContentProviderExternalMethod() throws NoSuchMethodException {
         if (getContentProviderExternalMethod == null) {
             try {
-                getContentProviderExternalMethod = manager.getClass()
-                        .getMethod("getContentProviderExternal", String.class, int.class, IBinder.class, String.class);
+                getContentProviderExternalMethod =
+                        manager.getClass()
+                                .getMethod(
+                                        "getContentProviderExternal",
+                                        String.class,
+                                        int.class,
+                                        IBinder.class,
+                                        String.class);
             } catch (NoSuchMethodException e) {
                 // old version
-                getContentProviderExternalMethod = manager.getClass().getMethod("getContentProviderExternal", String.class, int.class, IBinder.class);
+                getContentProviderExternalMethod =
+                        manager.getClass()
+                                .getMethod(
+                                        "getContentProviderExternal",
+                                        String.class,
+                                        int.class,
+                                        IBinder.class);
                 getContentProviderExternalMethodLegacy = true;
             }
         }
@@ -37,7 +49,10 @@ public class ActivityManager {
 
     private Method getRemoveContentProviderExternalMethod() throws NoSuchMethodException {
         if (removeContentProviderExternalMethod == null) {
-            removeContentProviderExternalMethod = manager.getClass().getMethod("removeContentProviderExternal", String.class, IBinder.class);
+            removeContentProviderExternalMethod =
+                    manager.getClass()
+                            .getMethod(
+                                    "removeContentProviderExternal", String.class, IBinder.class);
         }
         return removeContentProviderExternalMethod;
     }
@@ -48,10 +63,10 @@ public class ActivityManager {
             Object[] args;
             if (!getContentProviderExternalMethodLegacy) {
                 // new version
-                args = new Object[]{name, ServiceManager.USER_ID, token, null};
+                args = new Object[] {name, ServiceManager.USER_ID, token, null};
             } else {
                 // old version
-                args = new Object[]{name, ServiceManager.USER_ID, token};
+                args = new Object[] {name, ServiceManager.USER_ID, token};
             }
             // ContentProviderHolder providerHolder = getContentProviderExternal(...);
             Object providerHolder = method.invoke(manager, args);
@@ -66,7 +81,10 @@ public class ActivityManager {
                 return null;
             }
             return new ContentProvider(this, provider, name, token);
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | NoSuchFieldException e) {
+        } catch (InvocationTargetException
+                | IllegalAccessException
+                | NoSuchMethodException
+                | NoSuchFieldException e) {
             Ln.e("Could not invoke method", e);
             return null;
         }

@@ -88,7 +88,7 @@ process][BUILD_simple]).
 For Windows, for simplicity, a prebuilt archive with all the dependencies
 (including `adb`) is available:
 
- - [`scrcpy-win64-v1.17.zip`][direct-win64]  
+ - [`scrcpy-win64-v1.17.zip`][direct-win64]
    _(SHA-256: 8b9e57993c707367ed10ebfe0e1ef563c7a29d9af4a355cd8b6a52a317c73eea)_
 
 [direct-win64]: https://github.com/Genymobile/scrcpy/releases/download/v1.17/scrcpy-win64-v1.17.zip
@@ -726,8 +726,8 @@ _<kbd>[Super]</kbd> is typically the <kbd>Windows</kbd> or <kbd>Cmd</kbd> key._
  | Enable/disable FPS counter (on stdout)      | <kbd>MOD</kbd>+<kbd>i</kbd>
  | Pinch-to-zoom                               | <kbd>Ctrl</kbd>+_click-and-move_
 
-_¹Double-click on black borders to remove them._  
-_²Right-click turns the screen on if it was off, presses BACK otherwise._  
+_¹Double-click on black borders to remove them._
+_²Right-click turns the screen on if it was off, presses BACK otherwise._
 _³Only on Android >= 7._
 
 All <kbd>Ctrl</kbd>+_key_ shortcuts are forwarded to the device, so they are

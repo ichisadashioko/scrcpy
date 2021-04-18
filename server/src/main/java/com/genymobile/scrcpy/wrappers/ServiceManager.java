@@ -24,7 +24,9 @@ public final class ServiceManager {
 
     public ServiceManager() {
         try {
-            getServiceMethod = Class.forName("android.os.ServiceManager").getDeclaredMethod("getService", String.class);
+            getServiceMethod =
+                    Class.forName("android.os.ServiceManager")
+                            .getDeclaredMethod("getService", String.class);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -33,7 +35,8 @@ public final class ServiceManager {
     private IInterface getService(String service, String type) {
         try {
             IBinder binder = (IBinder) getServiceMethod.invoke(null, service);
-            Method asInterfaceMethod = Class.forName(type + "$Stub").getMethod("asInterface", IBinder.class);
+            Method asInterfaceMethod =
+                    Class.forName(type + "$Stub").getMethod("asInterface", IBinder.class);
             return (IInterface) asInterfaceMethod.invoke(null, binder);
         } catch (Exception e) {
             throw new AssertionError(e);
@@ -49,14 +52,17 @@ public final class ServiceManager {
 
     public DisplayManager getDisplayManager() {
         if (displayManager == null) {
-            displayManager = new DisplayManager(getService("display", "android.hardware.display.IDisplayManager"));
+            displayManager =
+                    new DisplayManager(
+                            getService("display", "android.hardware.display.IDisplayManager"));
         }
         return displayManager;
     }
 
     public InputManager getInputManager() {
         if (inputManager == null) {
-            inputManager = new InputManager(getService("input", "android.hardware.input.IInputManager"));
+            inputManager =
+                    new InputManager(getService("input", "android.hardware.input.IInputManager"));
         }
         return inputManager;
     }
@@ -70,7 +76,11 @@ public final class ServiceManager {
 
     public StatusBarManager getStatusBarManager() {
         if (statusBarManager == null) {
-            statusBarManager = new StatusBarManager(getService("statusbar", "com.android.internal.statusbar.IStatusBarService"));
+            statusBarManager =
+                    new StatusBarManager(
+                            getService(
+                                    "statusbar",
+                                    "com.android.internal.statusbar.IStatusBarService"));
         }
         return statusBarManager;
     }

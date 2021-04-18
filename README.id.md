@@ -620,8 +620,8 @@ _<kbd>[Super]</kbd> biasanya adalah <kbd>Windows</kbd> atau <kbd>Cmd</kbd> key._
  | Mengaktifkan/menonaktifkan penghitung FPS (di stdout) | <kbd>MOD</kbd>+<kbd>i</kbd>
  | Cubit-untuk-memperbesar/memperkecil                   | <kbd>Ctrl</kbd>+_klik-dan-pindah_
 
-_¹Klik-dua-kali pada batas hitam untuk menghapusnya._  
-_²Klik-kanan akan menghidupkan layar jika mati, tekan BACK jika tidak._  
+_¹Klik-dua-kali pada batas hitam untuk menghapusnya._
+_²Klik-kanan akan menghidupkan layar jika mati, tekan BACK jika tidak._
 _³Hanya di Android >= 7._
 
 Semua <kbd>Ctrl</kbd>+_key_ pintasan diteruskan ke perangkat, demikian adanya
@@ -693,4 +693,3 @@ Baca [halaman pengembang].
 
 [article-intro]: https://blog.rom1v.com/2018/03/introducing-scrcpy/
 [article-tcpip]: https://www.genymotion.com/blog/open-source-project-scrcpy-now-works-wirelessly/
-

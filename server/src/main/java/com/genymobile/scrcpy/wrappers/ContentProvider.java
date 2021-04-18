@@ -1,9 +1,9 @@
 package com.genymobile.scrcpy.wrappers;
 
-import com.genymobile.scrcpy.Ln;
-
 import android.os.Bundle;
 import android.os.IBinder;
+
+import com.genymobile.scrcpy.Ln;
 
 import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
@@ -48,16 +48,39 @@ public class ContentProvider implements Closeable {
         if (callMethod == null) {
 
             try {
-                callMethod = provider.getClass()
-                        .getMethod("call", String.class, String.class, String.class, String.class, String.class, Bundle.class);
+                callMethod =
+                        provider.getClass()
+                                .getMethod(
+                                        "call",
+                                        String.class,
+                                        String.class,
+                                        String.class,
+                                        String.class,
+                                        String.class,
+                                        Bundle.class);
                 callMethodVersion = 0;
             } catch (NoSuchMethodException e) {
                 // old versions
                 try {
-                    callMethod = provider.getClass().getMethod("call", String.class, String.class, String.class, String.class, Bundle.class);
+                    callMethod =
+                            provider.getClass()
+                                    .getMethod(
+                                            "call",
+                                            String.class,
+                                            String.class,
+                                            String.class,
+                                            String.class,
+                                            Bundle.class);
                     callMethodVersion = 1;
                 } catch (NoSuchMethodException e2) {
-                    callMethod = provider.getClass().getMethod("call", String.class, String.class, String.class, Bundle.class);
+                    callMethod =
+                            provider.getClass()
+                                    .getMethod(
+                                            "call",
+                                            String.class,
+                                            String.class,
+                                            String.class,
+                                            Bundle.class);
                     callMethodVersion = 2;
                 }
             }
@@ -71,13 +94,24 @@ public class ContentProvider implements Closeable {
             Object[] args;
             switch (callMethodVersion) {
                 case 0:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, null, "settings", callMethod, arg, extras};
+                    args =
+                            new Object[] {
+                                ServiceManager.PACKAGE_NAME,
+                                null,
+                                "settings",
+                                callMethod,
+                                arg,
+                                extras
+                            };
                     break;
                 case 1:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, "settings", callMethod, arg, extras};
+                    args =
+                            new Object[] {
+                                ServiceManager.PACKAGE_NAME, "settings", callMethod, arg, extras
+                            };
                     break;
                 default:
-                    args = new Object[]{ServiceManager.PACKAGE_NAME, callMethod, arg, extras};
+                    args = new Object[] {ServiceManager.PACKAGE_NAME, callMethod, arg, extras};
                     break;
             }
             return (Bundle) method.invoke(provider, args);

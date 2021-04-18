@@ -1,12 +1,12 @@
 package com.genymobile.scrcpy;
 
-import com.genymobile.scrcpy.wrappers.ContentProvider;
-
 import android.graphics.Rect;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.os.BatteryManager;
 import android.os.Build;
+
+import com.genymobile.scrcpy.wrappers.ContentProvider;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,13 +14,19 @@ import java.util.Locale;
 
 public final class Server {
 
-
     private Server() {
         // not instantiable
     }
 
     private static void scrcpy(Options options) throws IOException {
-        Ln.i("Device: " + Build.MANUFACTURER + " " + Build.MODEL + " (Android " + Build.VERSION.RELEASE + ")");
+        Ln.i(
+                "Device: "
+                        + Build.MANUFACTURER
+                        + " "
+                        + Build.MODEL
+                        + " (Android "
+                        + Build.VERSION.RELEASE
+                        + ")");
         final Device device = new Device(options);
         List<CodecOption> codecOptions = CodecOption.parse(options.getCodecOptions());
 
@@ -29,14 +35,23 @@ public final class Server {
         if (options.getShowTouches() || options.getStayAwake()) {
             try (ContentProvider settings = Device.createSettingsProvider()) {
                 if (options.getShowTouches()) {
-                    String oldValue = settings.getAndPutValue(ContentProvider.TABLE_SYSTEM, "show_touches", "1");
+                    String oldValue =
+                            settings.getAndPutValue(
+                                    ContentProvider.TABLE_SYSTEM, "show_touches", "1");
                     // If "show touches" was disabled, it must be disabled back on clean up
                     mustDisableShowTouchesOnCleanUp = !"1".equals(oldValue);
                 }
 
                 if (options.getStayAwake()) {
-                    int stayOn = BatteryManager.BATTERY_PLUGGED_AC | BatteryManager.BATTERY_PLUGGED_USB | BatteryManager.BATTERY_PLUGGED_WIRELESS;
-                    String oldValue = settings.getAndPutValue(ContentProvider.TABLE_GLOBAL, "stay_on_while_plugged_in", String.valueOf(stayOn));
+                    int stayOn =
+                            BatteryManager.BATTERY_PLUGGED_AC
+                                    | BatteryManager.BATTERY_PLUGGED_USB
+                                    | BatteryManager.BATTERY_PLUGGED_WIRELESS;
+                    String oldValue =
+                            settings.getAndPutValue(
+                                    ContentProvider.TABLE_GLOBAL,
+                                    "stay_on_while_plugged_in",
+                                    String.valueOf(stayOn));
                     try {
                         restoreStayOn = Integer.parseInt(oldValue);
                         if (restoreStayOn == stayOn) {
@@ -55,8 +70,13 @@ public final class Server {
         boolean tunnelForward = options.isTunnelForward();
 
         try (DesktopConnection connection = DesktopConnection.open(device, tunnelForward)) {
-            ScreenEncoder screenEncoder = new ScreenEncoder(options.getSendFrameMeta(), options.getBitRate(), options.getMaxFps(), codecOptions,
-                    options.getEncoderName());
+            ScreenEncoder screenEncoder =
+                    new ScreenEncoder(
+                            options.getSendFrameMeta(),
+                            options.getBitRate(),
+                            options.getMaxFps(),
+                            codecOptions,
+                            options.getEncoderName());
 
             Thread controllerThread = null;
             Thread deviceMessageSenderThread = null;
@@ -67,12 +87,13 @@ public final class Server {
                 controllerThread = startController(controller);
                 deviceMessageSenderThread = startDeviceMessageSender(controller.getSender());
 
-                device.setClipboardListener(new Device.ClipboardListener() {
-                    @Override
-                    public void onClipboardTextChanged(String text) {
-                        controller.getSender().pushClipboardText(text);
-                    }
-                });
+                device.setClipboardListener(
+                        new Device.ClipboardListener() {
+                            @Override
+                            public void onClipboardTextChanged(String text) {
+                                controller.getSender().pushClipboardText(text);
+                            }
+                        });
             }
 
             try {
@@ -93,33 +114,37 @@ public final class Server {
     }
 
     private static Thread startController(final Controller controller) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    controller.control();
-                } catch (IOException e) {
-                    // this is expected on close
-                    Ln.d("Controller stopped");
-                }
-            }
-        });
+        Thread thread =
+                new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    controller.control();
+                                } catch (IOException e) {
+                                    // this is expected on close
+                                    Ln.d("Controller stopped");
+                                }
+                            }
+                        });
         thread.start();
         return thread;
     }
 
     private static Thread startDeviceMessageSender(final DeviceMessageSender sender) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    sender.loop();
-                } catch (IOException | InterruptedException e) {
-                    // this is expected on close
-                    Ln.d("Device message sender stopped");
-                }
-            }
-        });
+        Thread thread =
+                new Thread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    sender.loop();
+                                } catch (IOException | InterruptedException e) {
+                                    // this is expected on close
+                                    Ln.d("Device message sender stopped");
+                                }
+                            }
+                        });
         thread.start();
         return thread;
     }
@@ -132,7 +157,12 @@ public final class Server {
         String clientVersion = args[0];
         if (!clientVersion.equals(BuildConfig.VERSION_NAME)) {
             throw new IllegalArgumentException(
-                    "The server version (" + BuildConfig.VERSION_NAME + ") does not match the client " + "(" + clientVersion + ")");
+                    "The server version ("
+                            + BuildConfig.VERSION_NAME
+                            + ") does not match the client "
+                            + "("
+                            + clientVersion
+                            + ")");
         }
 
         final int expectedParameters = 15;
@@ -195,7 +225,8 @@ public final class Server {
         // input format: "width:height:x:y"
         String[] tokens = crop.split(":");
         if (tokens.length != 4) {
-            throw new IllegalArgumentException("Crop must contains 4 values separated by colons: \"" + crop + "\"");
+            throw new IllegalArgumentException(
+                    "Crop must contains 4 values separated by colons: \"" + crop + "\"");
         }
         int width = Integer.parseInt(tokens[0]);
         int height = Integer.parseInt(tokens[1]);
@@ -237,13 +268,14 @@ public final class Server {
     }
 
     public static void main(String... args) throws Exception {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                Ln.e("Exception on thread " + t, e);
-                suggestFix(e);
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(
+                new Thread.UncaughtExceptionHandler() {
+                    @Override
+                    public void uncaughtException(Thread t, Throwable e) {
+                        Ln.e("Exception on thread " + t, e);
+                        suggestFix(e);
+                    }
+                });
 
         Options options = createOptions(args);
 

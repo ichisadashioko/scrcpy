@@ -7,8 +7,7 @@ public final class DeviceMessage {
     private int type;
     private String text;
 
-    private DeviceMessage() {
-    }
+    private DeviceMessage() {}
 
     public static DeviceMessage createClipboard(String text) {
         DeviceMessage event = new DeviceMessage();

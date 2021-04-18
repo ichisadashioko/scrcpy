@@ -8,8 +8,9 @@ import java.io.IOException;
 
 /**
  * Handle the cleanup of scrcpy, even if the main process is killed.
- * <p>
- * This is useful to restore some state when scrcpy is closed, even on device disconnection (which kills the scrcpy process).
+ *
+ * <p>This is useful to restore some state when scrcpy is closed, even on device disconnection
+ * (which kills the scrcpy process).
  */
 public final class CleanUp {
 
@@ -19,7 +20,9 @@ public final class CleanUp {
         // not instantiable
     }
 
-    public static void configure(boolean disableShowTouches, int restoreStayOn, boolean restoreNormalPowerMode) throws IOException {
+    public static void configure(
+            boolean disableShowTouches, int restoreStayOn, boolean restoreNormalPowerMode)
+            throws IOException {
         boolean needProcess = disableShowTouches || restoreStayOn != -1 || restoreNormalPowerMode;
         if (needProcess) {
             startProcess(disableShowTouches, restoreStayOn, restoreNormalPowerMode);
@@ -29,9 +32,17 @@ public final class CleanUp {
         }
     }
 
-    private static void startProcess(boolean disableShowTouches, int restoreStayOn, boolean restoreNormalPowerMode) throws IOException {
-        String[] cmd = {"app_process", "/", CleanUp.class.getName(), String.valueOf(disableShowTouches), String.valueOf(
-                restoreStayOn), String.valueOf(restoreNormalPowerMode)};
+    private static void startProcess(
+            boolean disableShowTouches, int restoreStayOn, boolean restoreNormalPowerMode)
+            throws IOException {
+        String[] cmd = {
+            "app_process",
+            "/",
+            CleanUp.class.getName(),
+            String.valueOf(disableShowTouches),
+            String.valueOf(restoreStayOn),
+            String.valueOf(restoreNormalPowerMode)
+        };
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
         builder.environment().put("CLASSPATH", SERVER_PATH);
@@ -64,14 +75,18 @@ public final class CleanUp {
 
         if (disableShowTouches || restoreStayOn != -1) {
             ServiceManager serviceManager = new ServiceManager();
-            try (ContentProvider settings = serviceManager.getActivityManager().createSettingsProvider()) {
+            try (ContentProvider settings =
+                    serviceManager.getActivityManager().createSettingsProvider()) {
                 if (disableShowTouches) {
                     Ln.i("Disabling \"show touches\"");
                     settings.putValue(ContentProvider.TABLE_SYSTEM, "show_touches", "0");
                 }
                 if (restoreStayOn != -1) {
                     Ln.i("Restoring \"stay awake\"");
-                    settings.putValue(ContentProvider.TABLE_GLOBAL, "stay_on_while_plugged_in", String.valueOf(restoreStayOn));
+                    settings.putValue(
+                            ContentProvider.TABLE_GLOBAL,
+                            "stay_on_while_plugged_in",
+                            String.valueOf(restoreStayOn));
                 }
             }
         }

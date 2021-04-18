@@ -1,7 +1,5 @@
 package com.genymobile.scrcpy;
 
-import com.genymobile.scrcpy.wrappers.SurfaceControl;
-
 import android.graphics.Rect;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
@@ -9,6 +7,8 @@ import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.os.IBinder;
 import android.view.Surface;
+
+import com.genymobile.scrcpy.wrappers.SurfaceControl;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -36,7 +36,12 @@ public class ScreenEncoder implements Device.RotationListener {
     private boolean sendFrameMeta;
     private long ptsOrigin;
 
-    public ScreenEncoder(boolean sendFrameMeta, int bitRate, int maxFps, List<CodecOption> codecOptions, String encoderName) {
+    public ScreenEncoder(
+            boolean sendFrameMeta,
+            int bitRate,
+            int maxFps,
+            List<CodecOption> codecOptions,
+            String encoderName) {
         this.sendFrameMeta = sendFrameMeta;
         this.bitRate = bitRate;
         this.maxFps = maxFps;
@@ -88,7 +93,13 @@ public class ScreenEncoder implements Device.RotationListener {
                 setSize(format, videoRect.width(), videoRect.height());
                 configure(codec, format);
                 Surface surface = codec.createInputSurface();
-                setDisplaySurface(display, surface, videoRotation, contentRect, unlockedVideoRect, layerStack);
+                setDisplaySurface(
+                        display,
+                        surface,
+                        videoRotation,
+                        contentRect,
+                        unlockedVideoRect,
+                        layerStack);
                 codec.start();
                 try {
                     alive = encode(codec, fd);
@@ -136,7 +147,8 @@ public class ScreenEncoder implements Device.RotationListener {
         return !eof;
     }
 
-    private void writeFrameMeta(FileDescriptor fd, MediaCodec.BufferInfo bufferInfo, int packetSize) throws IOException {
+    private void writeFrameMeta(FileDescriptor fd, MediaCodec.BufferInfo bufferInfo, int packetSize)
+            throws IOException {
         headerBuffer.clear();
 
         long pts;
@@ -159,7 +171,9 @@ public class ScreenEncoder implements Device.RotationListener {
         List<MediaCodecInfo> result = new ArrayList<>();
         MediaCodecList list = new MediaCodecList(MediaCodecList.REGULAR_CODECS);
         for (MediaCodecInfo codecInfo : list.getCodecInfos()) {
-            if (codecInfo.isEncoder() && Arrays.asList(codecInfo.getSupportedTypes()).contains(MediaFormat.MIMETYPE_VIDEO_AVC)) {
+            if (codecInfo.isEncoder()
+                    && Arrays.asList(codecInfo.getSupportedTypes())
+                            .contains(MediaFormat.MIMETYPE_VIDEO_AVC)) {
                 result.add(codecInfo);
             }
         }
@@ -198,13 +212,16 @@ public class ScreenEncoder implements Device.RotationListener {
         Ln.d("Codec option set: " + key + " (" + value.getClass().getSimpleName() + ") = " + value);
     }
 
-    private static MediaFormat createFormat(int bitRate, int maxFps, List<CodecOption> codecOptions) {
+    private static MediaFormat createFormat(
+            int bitRate, int maxFps, List<CodecOption> codecOptions) {
         MediaFormat format = new MediaFormat();
         format.setString(MediaFormat.KEY_MIME, MediaFormat.MIMETYPE_VIDEO_AVC);
         format.setInteger(MediaFormat.KEY_BIT_RATE, bitRate);
-        // must be present to configure the encoder, but does not impact the actual frame rate, which is variable
+        // must be present to configure the encoder, but does not impact the actual frame rate,
+        // which is variable
         format.setInteger(MediaFormat.KEY_FRAME_RATE, 60);
-        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        format.setInteger(
+                MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, DEFAULT_I_FRAME_INTERVAL);
         // display the very first frame, and recover from bad quality when no new frames
         format.setLong(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, REPEAT_FRAME_DELAY_US); // µs
@@ -237,7 +254,13 @@ public class ScreenEncoder implements Device.RotationListener {
         format.setInteger(MediaFormat.KEY_HEIGHT, height);
     }
 
-    private static void setDisplaySurface(IBinder display, Surface surface, int orientation, Rect deviceRect, Rect displayRect, int layerStack) {
+    private static void setDisplaySurface(
+            IBinder display,
+            Surface surface,
+            int orientation,
+            Rect deviceRect,
+            Rect displayRect,
+            int layerStack) {
         SurfaceControl.openTransaction();
         try {
             SurfaceControl.setDisplaySurface(display, surface);

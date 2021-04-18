@@ -18,11 +18,13 @@ public final class Workarounds {
 
     @SuppressWarnings("deprecation")
     public static void prepareMainLooper() {
-        // Some devices internally create a Handler when creating an input Surface, causing an exception:
+        // Some devices internally create a Handler when creating an input Surface, causing an
+        // exception:
         //   "Can't create handler inside thread that has not called Looper.prepare()"
         // <https://github.com/Genymobile/scrcpy/issues/240>
         //
-        // Use Looper.prepareMainLooper() instead of Looper.prepare() to avoid a NullPointerException:
+        // Use Looper.prepareMainLooper() instead of Looper.prepare() to avoid a
+        // NullPointerException:
         //   "Attempt to read from field 'android.os.MessageQueue android.os.Looper.mQueue'
         //    on a null object reference"
         // <https://github.com/Genymobile/scrcpy/issues/921>
@@ -39,7 +41,8 @@ public final class Workarounds {
             Object activityThread = activityThreadConstructor.newInstance();
 
             // ActivityThread.sCurrentActivityThread = activityThread;
-            Field sCurrentActivityThreadField = activityThreadClass.getDeclaredField("sCurrentActivityThread");
+            Field sCurrentActivityThreadField =
+                    activityThreadClass.getDeclaredField("sCurrentActivityThread");
             sCurrentActivityThreadField.setAccessible(true);
             sCurrentActivityThreadField.set(null, activityThread);
 
@@ -58,18 +61,21 @@ public final class Workarounds {
             appInfoField.set(appBindData, applicationInfo);
 
             // activityThread.mBoundApplication = appBindData;
-            Field mBoundApplicationField = activityThreadClass.getDeclaredField("mBoundApplication");
+            Field mBoundApplicationField =
+                    activityThreadClass.getDeclaredField("mBoundApplication");
             mBoundApplicationField.setAccessible(true);
             mBoundApplicationField.set(activityThread, appBindData);
 
             // Context ctx = activityThread.getSystemContext();
-            Method getSystemContextMethod = activityThreadClass.getDeclaredMethod("getSystemContext");
+            Method getSystemContextMethod =
+                    activityThreadClass.getDeclaredMethod("getSystemContext");
             Context ctx = (Context) getSystemContextMethod.invoke(activityThread);
 
             Application app = Instrumentation.newApplication(Application.class, ctx);
 
             // activityThread.mInitialApplication = app;
-            Field mInitialApplicationField = activityThreadClass.getDeclaredField("mInitialApplication");
+            Field mInitialApplicationField =
+                    activityThreadClass.getDeclaredField("mInitialApplication");
             mInitialApplicationField.setAccessible(true);
             mInitialApplicationField.set(activityThread, app);
         } catch (Throwable throwable) {

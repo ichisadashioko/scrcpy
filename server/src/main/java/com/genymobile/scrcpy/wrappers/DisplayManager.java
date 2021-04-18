@@ -1,9 +1,9 @@
 package com.genymobile.scrcpy.wrappers;
 
+import android.os.IInterface;
+
 import com.genymobile.scrcpy.DisplayInfo;
 import com.genymobile.scrcpy.Size;
-
-import android.os.IInterface;
 
 public final class DisplayManager {
     private final IInterface manager;
@@ -14,7 +14,10 @@ public final class DisplayManager {
 
     public DisplayInfo getDisplayInfo(int displayId) {
         try {
-            Object displayInfo = manager.getClass().getMethod("getDisplayInfo", int.class).invoke(manager, displayId);
+            Object displayInfo =
+                    manager.getClass()
+                            .getMethod("getDisplayInfo", int.class)
+                            .invoke(manager, displayId);
             if (displayInfo == null) {
                 return null;
             }

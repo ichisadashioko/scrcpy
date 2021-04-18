@@ -1,8 +1,8 @@
 package com.genymobile.scrcpy.wrappers;
 
-import com.genymobile.scrcpy.Ln;
-
 import android.os.IInterface;
+
+import com.genymobile.scrcpy.Ln;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,7 +19,8 @@ public class StatusBarManager {
 
     private Method getExpandNotificationsPanelMethod() throws NoSuchMethodException {
         if (expandNotificationsPanelMethod == null) {
-            expandNotificationsPanelMethod = manager.getClass().getMethod("expandNotificationsPanel");
+            expandNotificationsPanelMethod =
+                    manager.getClass().getMethod("expandNotificationsPanel");
         }
         return expandNotificationsPanelMethod;
     }

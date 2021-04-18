@@ -37,4 +37,3 @@ public final class DisplayInfo {
         return flags;
     }
 }
-

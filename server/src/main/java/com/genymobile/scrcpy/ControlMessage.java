@@ -1,8 +1,6 @@
 package com.genymobile.scrcpy;
 
-/**
- * Union of all supported event types, identified by their {@code type}.
- */
+/** Union of all supported event types, identified by their {@code type}. */
 public final class ControlMessage {
 
     public static final int TYPE_INJECT_KEYCODE = 0;
@@ -31,10 +29,10 @@ public final class ControlMessage {
     private boolean paste;
     private int repeat;
 
-    private ControlMessage() {
-    }
+    private ControlMessage() {}
 
-    public static ControlMessage createInjectKeycode(int action, int keycode, int repeat, int metaState) {
+    public static ControlMessage createInjectKeycode(
+            int action, int keycode, int repeat, int metaState) {
         ControlMessage msg = new ControlMessage();
         msg.type = TYPE_INJECT_KEYCODE;
         msg.action = action;
@@ -51,7 +49,8 @@ public final class ControlMessage {
         return msg;
     }
 
-    public static ControlMessage createInjectTouchEvent(int action, long pointerId, Position position, float pressure, int buttons) {
+    public static ControlMessage createInjectTouchEvent(
+            int action, long pointerId, Position position, float pressure, int buttons) {
         ControlMessage msg = new ControlMessage();
         msg.type = TYPE_INJECT_TOUCH_EVENT;
         msg.action = action;
@@ -62,7 +61,8 @@ public final class ControlMessage {
         return msg;
     }
 
-    public static ControlMessage createInjectScrollEvent(Position position, int hScroll, int vScroll) {
+    public static ControlMessage createInjectScrollEvent(
+            Position position, int hScroll, int vScroll) {
         ControlMessage msg = new ControlMessage();
         msg.type = TYPE_INJECT_SCROLL_EVENT;
         msg.position = position;
@@ -79,9 +79,7 @@ public final class ControlMessage {
         return msg;
     }
 
-    /**
-     * @param mode one of the {@code Device.SCREEN_POWER_MODE_*} constants
-     */
+    /** @param mode one of the {@code Device.SCREEN_POWER_MODE_*} constants */
     public static ControlMessage createSetScreenPowerMode(int mode) {
         ControlMessage msg = new ControlMessage();
         msg.type = TYPE_SET_SCREEN_POWER_MODE;

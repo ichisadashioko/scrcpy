@@ -1,9 +1,9 @@
 package com.genymobile.scrcpy.wrappers;
 
-import com.genymobile.scrcpy.Ln;
-
 import android.os.IInterface;
 import android.view.IRotationWatcher;
+
+import com.genymobile.scrcpy.Ln;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -99,10 +99,12 @@ public final class WindowManager {
             try {
                 // display parameter added since this commit:
                 // https://android.googlesource.com/platform/frameworks/base/+/35fa3c26adcb5f6577849fd0df5228b1f67cf2c6%5E%21/#F1
-                cls.getMethod("watchRotation", IRotationWatcher.class, int.class).invoke(manager, rotationWatcher, displayId);
+                cls.getMethod("watchRotation", IRotationWatcher.class, int.class)
+                        .invoke(manager, rotationWatcher, displayId);
             } catch (NoSuchMethodException e) {
                 // old version
-                cls.getMethod("watchRotation", IRotationWatcher.class).invoke(manager, rotationWatcher);
+                cls.getMethod("watchRotation", IRotationWatcher.class)
+                        .invoke(manager, rotationWatcher);
             }
         } catch (Exception e) {
             throw new AssertionError(e);

@@ -16,7 +16,8 @@ public class Controller {
 
     private static final int DEVICE_ID_VIRTUAL = -1;
 
-    private static final ScheduledExecutorService EXECUTOR = Executors.newSingleThreadScheduledExecutor();
+    private static final ScheduledExecutorService EXECUTOR =
+            Executors.newSingleThreadScheduledExecutor();
 
     private final Device device;
     private final DesktopConnection connection;
@@ -26,8 +27,10 @@ public class Controller {
 
     private long lastTouchDown;
     private final PointersState pointersState = new PointersState();
-    private final MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[PointersState.MAX_POINTERS];
-    private final MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[PointersState.MAX_POINTERS];
+    private final MotionEvent.PointerProperties[] pointerProperties =
+            new MotionEvent.PointerProperties[PointersState.MAX_POINTERS];
+    private final MotionEvent.PointerCoords[] pointerCoords =
+            new MotionEvent.PointerCoords[PointersState.MAX_POINTERS];
 
     private boolean keepPowerModeOff;
 
@@ -81,7 +84,8 @@ public class Controller {
         switch (msg.getType()) {
             case ControlMessage.TYPE_INJECT_KEYCODE:
                 if (device.supportsInputEvents()) {
-                    injectKeycode(msg.getAction(), msg.getKeycode(), msg.getRepeat(), msg.getMetaState());
+                    injectKeycode(
+                            msg.getAction(), msg.getKeycode(), msg.getRepeat(), msg.getMetaState());
                 }
                 break;
             case ControlMessage.TYPE_INJECT_TEXT:
@@ -91,7 +95,12 @@ public class Controller {
                 break;
             case ControlMessage.TYPE_INJECT_TOUCH_EVENT:
                 if (device.supportsInputEvents()) {
-                    injectTouch(msg.getAction(), msg.getPointerId(), msg.getPosition(), msg.getPressure(), msg.getButtons());
+                    injectTouch(
+                            msg.getAction(),
+                            msg.getPointerId(),
+                            msg.getPosition(),
+                            msg.getPressure(),
+                            msg.getButtons());
                 }
                 break;
             case ControlMessage.TYPE_INJECT_SCROLL_EVENT:
@@ -125,7 +134,9 @@ public class Controller {
                     boolean setPowerModeOk = Device.setScreenPowerMode(mode);
                     if (setPowerModeOk) {
                         keepPowerModeOff = mode == Device.POWER_MODE_OFF;
-                        Ln.i("Device screen turned " + (mode == Device.POWER_MODE_OFF ? "off" : "on"));
+                        Ln.i(
+                                "Device screen turned "
+                                        + (mode == Device.POWER_MODE_OFF ? "off" : "on"));
                     }
                 }
                 break;
@@ -138,7 +149,9 @@ public class Controller {
     }
 
     private boolean injectKeycode(int action, int keycode, int repeat, int metaState) {
-        if (keepPowerModeOff && action == KeyEvent.ACTION_UP && (keycode == KeyEvent.KEYCODE_POWER || keycode == KeyEvent.KEYCODE_WAKEUP)) {
+        if (keepPowerModeOff
+                && action == KeyEvent.ACTION_UP
+                && (keycode == KeyEvent.KEYCODE_POWER || keycode == KeyEvent.KEYCODE_WAKEUP)) {
             schedulePowerModeOff();
         }
         return device.injectKeyEvent(action, keycode, repeat, metaState);
@@ -146,7 +159,7 @@ public class Controller {
 
     private boolean injectChar(char c) {
         String decomposed = KeyComposition.decompose(c);
-        char[] chars = decomposed != null ? decomposed.toCharArray() : new char[]{c};
+        char[] chars = decomposed != null ? decomposed.toCharArray() : new char[] {c};
         KeyEvent[] events = charMap.getEvents(chars);
         if (events == null) {
             return false;
@@ -171,7 +184,8 @@ public class Controller {
         return successCount;
     }
 
-    private boolean injectTouch(int action, long pointerId, Position position, float pressure, int buttons) {
+    private boolean injectTouch(
+            int action, long pointerId, Position position, float pressure, int buttons) {
         long now = SystemClock.uptimeMillis();
 
         Point point = device.getPhysicalPoint(position);
@@ -199,18 +213,36 @@ public class Controller {
         } else {
             // secondary pointers must use ACTION_POINTER_* ORed with the pointerIndex
             if (action == MotionEvent.ACTION_UP) {
-                action = MotionEvent.ACTION_POINTER_UP | (pointerIndex << MotionEvent.ACTION_POINTER_INDEX_SHIFT);
+                action =
+                        MotionEvent.ACTION_POINTER_UP
+                                | (pointerIndex << MotionEvent.ACTION_POINTER_INDEX_SHIFT);
             } else if (action == MotionEvent.ACTION_DOWN) {
-                action = MotionEvent.ACTION_POINTER_DOWN | (pointerIndex << MotionEvent.ACTION_POINTER_INDEX_SHIFT);
+                action =
+                        MotionEvent.ACTION_POINTER_DOWN
+                                | (pointerIndex << MotionEvent.ACTION_POINTER_INDEX_SHIFT);
             }
         }
 
         // Right-click and middle-click only work if the source is a mouse
         boolean nonPrimaryButtonPressed = (buttons & ~MotionEvent.BUTTON_PRIMARY) != 0;
-        int source = nonPrimaryButtonPressed ? InputDevice.SOURCE_MOUSE : InputDevice.SOURCE_TOUCHSCREEN;
+        int source =
+                nonPrimaryButtonPressed ? InputDevice.SOURCE_MOUSE : InputDevice.SOURCE_TOUCHSCREEN;
 
-        MotionEvent event = MotionEvent
-                .obtain(lastTouchDown, now, action, pointerCount, pointerProperties, pointerCoords, 0, buttons, 1f, 1f, DEVICE_ID_VIRTUAL, 0, source,
+        MotionEvent event =
+                MotionEvent.obtain(
+                        lastTouchDown,
+                        now,
+                        action,
+                        pointerCount,
+                        pointerProperties,
+                        pointerCoords,
+                        0,
+                        buttons,
+                        1f,
+                        1f,
+                        DEVICE_ID_VIRTUAL,
+                        0,
+                        source,
                         0);
         return device.injectEvent(event);
     }
@@ -232,23 +264,37 @@ public class Controller {
         coords.setAxisValue(MotionEvent.AXIS_HSCROLL, hScroll);
         coords.setAxisValue(MotionEvent.AXIS_VSCROLL, vScroll);
 
-        MotionEvent event = MotionEvent
-                .obtain(lastTouchDown, now, MotionEvent.ACTION_SCROLL, 1, pointerProperties, pointerCoords, 0, 0, 1f, 1f, DEVICE_ID_VIRTUAL, 0,
-                        InputDevice.SOURCE_TOUCHSCREEN, 0);
+        MotionEvent event =
+                MotionEvent.obtain(
+                        lastTouchDown,
+                        now,
+                        MotionEvent.ACTION_SCROLL,
+                        1,
+                        pointerProperties,
+                        pointerCoords,
+                        0,
+                        0,
+                        1f,
+                        1f,
+                        DEVICE_ID_VIRTUAL,
+                        0,
+                        InputDevice.SOURCE_TOUCHSCREEN,
+                        0);
         return device.injectEvent(event);
     }
 
-    /**
-     * Schedule a call to set power mode to off after a small delay.
-     */
+    /** Schedule a call to set power mode to off after a small delay. */
     private static void schedulePowerModeOff() {
-        EXECUTOR.schedule(new Runnable() {
-            @Override
-            public void run() {
-                Ln.i("Forcing screen off");
-                Device.setScreenPowerMode(Device.POWER_MODE_OFF);
-            }
-        }, 200, TimeUnit.MILLISECONDS);
+        EXECUTOR.schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        Ln.i("Forcing screen off");
+                        Device.setScreenPowerMode(Device.POWER_MODE_OFF);
+                    }
+                },
+                200,
+                TimeUnit.MILLISECONDS);
     }
 
     private boolean pressBackOrTurnScreenOn() {
@@ -266,7 +312,9 @@ public class Controller {
         }
 
         // On Android >= 7, also press the PASTE key if requested
-        if (paste && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && device.supportsInputEvents()) {
+        if (paste
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                && device.supportsInputEvents()) {
             device.injectKeycode(KeyEvent.KEYCODE_PASTE);
         }
 

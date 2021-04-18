@@ -716,7 +716,7 @@ _<kbd>[Super]</kbd> é tipicamente a tecla <kbd>Windows</kbd> ou <kbd>Cmd</kbd>.
  | Ativar/desativar contador de FPS (em stdout) | <kbd>MOD</kbd>+<kbd>i</kbd>
  | Pinçar para dar zoom                        | <kbd>Ctrl</kbd>+_clicar-e-mover_
 
-_¹Clique-duplo em bordas pretas para removê-las._  
+_¹Clique-duplo em bordas pretas para removê-las._
 _²Clique-direito liga a tela se ela estiver desligada, pressiona BACK caso contrário._
 _³Apenas em Android >= 7._
 

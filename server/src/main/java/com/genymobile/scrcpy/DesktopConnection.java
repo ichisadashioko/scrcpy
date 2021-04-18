@@ -27,7 +27,8 @@ public final class DesktopConnection implements Closeable {
     private final ControlMessageReader reader = new ControlMessageReader();
     private final DeviceMessageWriter writer = new DeviceMessageWriter();
 
-    private DesktopConnection(LocalSocket videoSocket, LocalSocket controlSocket) throws IOException {
+    private DesktopConnection(LocalSocket videoSocket, LocalSocket controlSocket)
+            throws IOException {
         this.videoSocket = videoSocket;
         this.controlSocket = controlSocket;
         controlInputStream = controlSocket.getInputStream();

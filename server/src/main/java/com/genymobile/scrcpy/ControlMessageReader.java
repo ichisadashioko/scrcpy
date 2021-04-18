@@ -16,7 +16,8 @@ public class ControlMessageReader {
 
     private static final int MESSAGE_MAX_SIZE = 1 << 18; // 256k
 
-    public static final int CLIPBOARD_TEXT_MAX_LENGTH = MESSAGE_MAX_SIZE - 6; // type: 1 byte; paste flag: 1 byte; length: 4 bytes
+    public static final int CLIPBOARD_TEXT_MAX_LENGTH =
+            MESSAGE_MAX_SIZE - 6; // type: 1 byte; paste flag: 1 byte; length: 4 bytes
     public static final int INJECT_TEXT_MAX_LENGTH = 300;
 
     private final byte[] rawBuffer = new byte[MESSAGE_MAX_SIZE];
@@ -137,7 +138,8 @@ public class ControlMessageReader {
         // convert it to a float between 0 and 1 (0x1p16f is 2^16 as float)
         float pressure = pressureInt == 0xffff ? 1f : (pressureInt / 0x1p16f);
         int buttons = buffer.getInt();
-        return ControlMessage.createInjectTouchEvent(action, pointerId, position, pressure, buttons);
+        return ControlMessage.createInjectTouchEvent(
+                action, pointerId, position, pressure, buttons);
     }
 
     private ControlMessage parseInjectScrollEvent() {

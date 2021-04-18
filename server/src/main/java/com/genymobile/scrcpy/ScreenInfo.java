@@ -3,29 +3,28 @@ package com.genymobile.scrcpy;
 import android.graphics.Rect;
 
 public final class ScreenInfo {
-    /**
-     * Device (physical) size, possibly cropped
-     */
+    /** Device (physical) size, possibly cropped */
     private final Rect contentRect; // device size, possibly cropped
 
     /**
-     * Video size, possibly smaller than the device size, already taking the device rotation and crop into account.
-     * <p>
-     * However, it does not include the locked video orientation.
+     * Video size, possibly smaller than the device size, already taking the device rotation and
+     * crop into account.
+     *
+     * <p>However, it does not include the locked video orientation.
      */
     private final Size unlockedVideoSize;
 
-    /**
-     * Device rotation, related to the natural device orientation (0, 1, 2 or 3)
-     */
+    /** Device rotation, related to the natural device orientation (0, 1, 2 or 3) */
     private final int deviceRotation;
 
-    /**
-     * The locked video orientation (-1: disabled, 0: normal, 1: 90° CCW, 2: 180°, 3: 90° CW)
-     */
+    /** The locked video orientation (-1: disabled, 0: normal, 1: 90° CCW, 2: 180°, 3: 90° CW) */
     private final int lockedVideoOrientation;
 
-    public ScreenInfo(Rect contentRect, Size unlockedVideoSize, int deviceRotation, int lockedVideoOrientation) {
+    public ScreenInfo(
+            Rect contentRect,
+            Size unlockedVideoSize,
+            int deviceRotation,
+            int lockedVideoOrientation) {
         this.contentRect = contentRect;
         this.unlockedVideoSize = unlockedVideoSize;
         this.deviceRotation = deviceRotation;
@@ -77,10 +76,12 @@ public final class ScreenInfo {
             newContentRect = contentRect;
             newUnlockedVideoSize = unlockedVideoSize;
         }
-        return new ScreenInfo(newContentRect, newUnlockedVideoSize, newDeviceRotation, lockedVideoOrientation);
+        return new ScreenInfo(
+                newContentRect, newUnlockedVideoSize, newDeviceRotation, lockedVideoOrientation);
     }
 
-    public static ScreenInfo computeScreenInfo(DisplayInfo displayInfo, Rect crop, int maxSize, int lockedVideoOrientation) {
+    public static ScreenInfo computeScreenInfo(
+            DisplayInfo displayInfo, Rect crop, int maxSize, int lockedVideoOrientation) {
         int rotation = displayInfo.getRotation();
         Size deviceSize = displayInfo.getSize();
         Rect contentRect = new Rect(0, 0, deviceSize.getWidth(), deviceSize.getHeight());
@@ -91,7 +92,12 @@ public final class ScreenInfo {
             }
             if (!contentRect.intersect(crop)) {
                 // intersect() changes contentRect so that it is intersected with crop
-                Ln.w("Crop rectangle (" + formatCrop(crop) + ") does not intersect device screen (" + formatCrop(deviceSize.toRect()) + ")");
+                Ln.w(
+                        "Crop rectangle ("
+                                + formatCrop(crop)
+                                + ") does not intersect device screen ("
+                                + formatCrop(deviceSize.toRect())
+                                + ")");
                 contentRect = new Rect(); // empty
             }
         }
@@ -136,7 +142,8 @@ public final class ScreenInfo {
     }
 
     /**
-     * Return the rotation to apply to the device rotation to get the requested locked video orientation
+     * Return the rotation to apply to the device rotation to get the requested locked video
+     * orientation
      *
      * @return the rotation offset
      */
@@ -149,7 +156,8 @@ public final class ScreenInfo {
     }
 
     /**
-     * Return the rotation to apply to the requested locked video orientation to get the device rotation
+     * Return the rotation to apply to the requested locked video orientation to get the device
+     * rotation
      *
      * @return the (reverse) rotation offset
      */

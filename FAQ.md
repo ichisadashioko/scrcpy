@@ -108,7 +108,7 @@ Try with another USB cable or plug it into another USB port. See [#281] and
 On some devices, you may need to enable an option to allow [simulating input].
 In developer options, enable:
 
-> **USB debugging (Security settings)**  
+> **USB debugging (Security settings)**
 > _Allow granting permissions and simulating input via USB debugging_
 
 [simulating input]: https://github.com/Genymobile/scrcpy/issues/70#issuecomment-373286323

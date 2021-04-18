@@ -2,13 +2,12 @@ package com.genymobile.scrcpy;
 
 public class Pointer {
 
-    /**
-     * Pointer id as received from the client.
-     */
+    /** Pointer id as received from the client. */
     private final long id;
 
     /**
-     * Local pointer id, using the lowest possible values to fill the {@link android.view.MotionEvent.PointerProperties PointerProperties}.
+     * Local pointer id, using the lowest possible values to fill the {@link
+     * android.view.MotionEvent.PointerProperties PointerProperties}.
      */
     private final int localId;
 

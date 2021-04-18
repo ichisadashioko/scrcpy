@@ -68,7 +68,8 @@ public class CodecOptionsTest {
 
     @Test
     public void testStringEscaped() {
-        List<CodecOption> codecOptions = CodecOption.parse("some_key:string=warning\\,this_is_not=a_new_key");
+        List<CodecOption> codecOptions =
+                CodecOption.parse("some_key:string=warning\\,this_is_not=a_new_key");
 
         Assert.assertEquals(1, codecOptions.size());
 
@@ -80,7 +81,8 @@ public class CodecOptionsTest {
 
     @Test
     public void testList() {
-        List<CodecOption> codecOptions = CodecOption.parse("a=1,b:int=2,c:long=3,d:float=4.5,e:string=a\\,b=c");
+        List<CodecOption> codecOptions =
+                CodecOption.parse("a=1,b:int=2,c:long=3,d:float=4.5,e:string=a\\,b=c");
 
         Assert.assertEquals(5, codecOptions.size());
 

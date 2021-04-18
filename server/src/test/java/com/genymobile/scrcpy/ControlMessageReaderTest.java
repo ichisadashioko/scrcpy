@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-
 public class ControlMessageReaderTest {
 
     @Test
@@ -100,7 +99,8 @@ public class ControlMessageReaderTest {
         byte[] packet = bos.toByteArray();
 
         // The message type (1 byte) does not count
-        Assert.assertEquals(ControlMessageReader.INJECT_TOUCH_EVENT_PAYLOAD_LENGTH, packet.length - 1);
+        Assert.assertEquals(
+                ControlMessageReader.INJECT_TOUCH_EVENT_PAYLOAD_LENGTH, packet.length - 1);
 
         reader.readFrom(new ByteArrayInputStream(packet));
         ControlMessage event = reader.next();
@@ -133,7 +133,8 @@ public class ControlMessageReaderTest {
         byte[] packet = bos.toByteArray();
 
         // The message type (1 byte) does not count
-        Assert.assertEquals(ControlMessageReader.INJECT_SCROLL_EVENT_PAYLOAD_LENGTH, packet.length - 1);
+        Assert.assertEquals(
+                ControlMessageReader.INJECT_SCROLL_EVENT_PAYLOAD_LENGTH, packet.length - 1);
 
         reader.readFrom(new ByteArrayInputStream(packet));
         ControlMessage event = reader.next();
@@ -271,7 +272,8 @@ public class ControlMessageReaderTest {
         byte[] packet = bos.toByteArray();
 
         // The message type (1 byte) does not count
-        Assert.assertEquals(ControlMessageReader.SET_SCREEN_POWER_MODE_PAYLOAD_LENGTH, packet.length - 1);
+        Assert.assertEquals(
+                ControlMessageReader.SET_SCREEN_POWER_MODE_PAYLOAD_LENGTH, packet.length - 1);
 
         reader.readFrom(new ByteArrayInputStream(packet));
         ControlMessage event = reader.next();

@@ -3,8 +3,8 @@ package com.genymobile.scrcpy;
 import android.util.Log;
 
 /**
- * Log both to Android logger (so that logs are visible in "adb logcat") and standard output/error (so that they are visible in the terminal
- * directly).
+ * Log both to Android logger (so that logs are visible in "adb logcat") and standard output/error
+ * (so that they are visible in the terminal directly).
  */
 public final class Ln {
 
@@ -12,7 +12,10 @@ public final class Ln {
     private static final String PREFIX = "[server] ";
 
     enum Level {
-        DEBUG, INFO, WARN, ERROR
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR
     }
 
     private static Level threshold = Level.INFO;
@@ -23,8 +26,8 @@ public final class Ln {
 
     /**
      * Initialize the log level.
-     * <p>
-     * Must be called before starting any new thread.
+     *
+     * <p>Must be called before starting any new thread.
      *
      * @param level the log level
      */

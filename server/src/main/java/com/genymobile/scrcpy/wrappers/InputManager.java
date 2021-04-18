@@ -1,9 +1,9 @@
 package com.genymobile.scrcpy.wrappers;
 
-import com.genymobile.scrcpy.Ln;
-
 import android.os.IInterface;
 import android.view.InputEvent;
+
+import com.genymobile.scrcpy.Ln;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,7 +25,8 @@ public final class InputManager {
 
     private Method getInjectInputEventMethod() throws NoSuchMethodException {
         if (injectInputEventMethod == null) {
-            injectInputEventMethod = manager.getClass().getMethod("injectInputEvent", InputEvent.class, int.class);
+            injectInputEventMethod =
+                    manager.getClass().getMethod("injectInputEvent", InputEvent.class, int.class);
         }
         return injectInputEventMethod;
     }

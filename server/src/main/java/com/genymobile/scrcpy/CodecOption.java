@@ -104,7 +104,8 @@ public class CodecOption {
                 value = valueString;
                 break;
             default:
-                throw new IllegalArgumentException("Invalid codec option type (int, long, float, str): " + type);
+                throw new IllegalArgumentException(
+                        "Invalid codec option type (int, long, float, str): " + type);
         }
 
         return new CodecOption(key, value);
