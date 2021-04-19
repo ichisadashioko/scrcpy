@@ -15,7 +15,6 @@ public final class ServiceManager {
     private final Method getServiceMethod;
 
     private WindowManager windowManager;
-    private DisplayManager displayManager;
     private InputManager inputManager;
     private PowerManager powerManager;
     private StatusBarManager statusBarManager;
@@ -48,15 +47,6 @@ public final class ServiceManager {
             windowManager = new WindowManager(getService("window", "android.view.IWindowManager"));
         }
         return windowManager;
-    }
-
-    public DisplayManager getDisplayManager() {
-        if (displayManager == null) {
-            displayManager =
-                    new DisplayManager(
-                            getService("display", "android.hardware.display.IDisplayManager"));
-        }
-        return displayManager;
     }
 
     public InputManager getInputManager() {
