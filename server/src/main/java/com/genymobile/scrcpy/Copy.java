@@ -1,5 +1,6 @@
 package com.genymobile.scrcpy;
 
+import com.genymobile.scrcpy.wrappers.ClipboardManager;
 import com.genymobile.scrcpy.wrappers.ServiceManager;
 
 import java.io.File;
@@ -43,28 +44,16 @@ public final class Copy {
                             String text_content =
                                     new String(text_file_bytes, StandardCharsets.UTF_8);
                             System.out.println(text_content);
-                            ClipboardManager clipboardManager = SERVICE_MANAGER.getClipboardManager();
-            if (clipboardManager != null) {
-                clipboardManager.addPrimaryClipChangedListener(new IOnPrimaryClipChangedListener.Stub() {
-                    @Override
-                    public void dispatchPrimaryClipChanged() {
-                        if (isSettingClipboard.get()) {
-                            // This is a notification for the change we are currently applying, ignore it
-                            return;
-                        }
-                        synchronized (Device.this) {
-                            if (clipboardListener != null) {
-                                String text = getClipboardText();
-                                if (text != null) {
-                                    clipboardListener.onClipboardTextChanged(text);
-                                }
+
+                            // scrcpy clipboard code
+                            ClipboardManager clipboardManager =
+                                    SERVICE_MANAGER.getClipboardManager();
+                            if (clipboardManager != null) {
+                                clipboardManager.setText(text_content);
+                            } else {
+                                System.err.println(
+                                        "No clipboard manager, copy-paste between device and computer will not work");
                             }
-                        }
-                    }
-                });
-            } else {
-                System.err.println("No clipboard manager, copy-paste between device and computer will not work");
-            }
                         }
                     }
                 }
